@@ -1,0 +1,85 @@
+name: Build Installers
+
+on:
+  push:
+    tags:
+      - 'v*' # Runs when you push a tag like v1.0.0
+
+jobs:
+  # Build Windows EXE and MSI
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows installer
+        run: npm run package:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload EXE and MSI
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installers
+          path: |
+            dist-packages/*.exe
+            dist-packages/*.msi
+
+# Build macOS DMG
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS DMG
+        run: npm run package:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-installer
+          path: dist-packages/*.dmg
+
+    #linux
+
+    linux:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 22
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Build Linux installers
+          run: npm run build:linux
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Upload Linux artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: linux-installers
+            path: |
+              dist-packages/*.AppImage
+              dist-packages/*.deb
+              dist-packages/*.snap

@@ -1,0 +1,85 @@
+appId: com.102782478SDEPortfolio1.warframestandingsanalytics
+productName: Warframe Standings Analytics
+copyright: "Copyright 2026"
+
+directories:
+  buildResources: build
+  output: dist-packages
+
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+
+asarUnpack:
+  - resources/**
+
+# Windows
+win:
+  icon: resources/icons/win/icon.ico
+  executableName: warframe-standings-analytics
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: msi
+      arch: [x64]
+    - target: dir       
+      arch: [x64]
+
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createStartMenuShortcut: true
+
+msi:
+  oneClick: false
+  perMachine: false
+
+# macOS
+mac:
+  icon: resources/icons/win/icon.icns
+  category: public.app-category.utilities
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    - NSCameraUsageDescription: Application requests access to the device's camera.
+    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    - target: dir
+      arch: [x64, arm64]
+
+dmg:
+  artifactName: ${name}-${version}.${ext}
+  window:
+    width: 540
+    height: 380
+
+# Linux
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+
+appImage:
+  artifactName: ${name}-${version}.${ext}
+
+npmRebuild: false
+
+publish:
+  provider: github
+  owner: BanglaWarlock
+  repo: warframe-standings-analytics
