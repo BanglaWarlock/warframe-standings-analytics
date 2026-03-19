@@ -82,3 +82,4 @@ publish:
   provider: github
   owner: BanglaWarlock
   repo: warframe-standings-analytics
+  releaseType: release
