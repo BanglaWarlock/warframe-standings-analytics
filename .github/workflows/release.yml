@@ -56,30 +56,29 @@ jobs:
           name: mac-installer
           path: dist-packages/*.dmg
 
-    #linux
+  #linux
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-    linux:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-        - uses: actions/setup-node@v4
-          with:
-            node-version: 22
+      - name: Install dependencies
+        run: npm ci
 
-        - name: Install dependencies
-          run: npm ci
+      - name: Build Linux installers
+        run: npm run build:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Build Linux installers
-          run: npm run build:linux
-          env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        - name: Upload Linux artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: linux-installers
-            path: |
-              dist-packages/*.AppImage
-              dist-packages/*.deb
-              dist-packages/*.snap
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-installers
+          path: |
+            dist-packages/*.AppImage
+            dist-packages/*.deb
+            dist-packages/*.snap
