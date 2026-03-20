@@ -511,3 +511,159 @@ body {
     color: var(--accent);
     margin-bottom: 10px;
 }
+
+/* ─── Sidebar search ─── */
+.sidebar-search {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.search-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* ─── Clickable rows ─── */
+.item-row.clickable {
+    cursor: pointer;
+}
+
+.item-row.clickable:hover td {
+    background: var(--card);
+}
+
+/* ─── Buyers modal ─── */
+.buyers-modal {
+    width: 620px;
+}
+
+.buyers-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.buyers-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.buyers-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.buyers-table thead th {
+    background: var(--card);
+    color: var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.buyer-row td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.buyer-name {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.buyer-status {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.buyer-plat {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.buyer-rank {
+    color: var(--accent2);
+    font-size: 12px;
+    text-align: center;
+}
+
+.buyer-rep {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-align: center;
+}
+
+.btn-copy {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.btn-copy:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn-copy.copied {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.buyers-format {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 11px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.format-label {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+
+.format-text {
+    color: var(--text-muted);
+    font-family: monospace;
+}

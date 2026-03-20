@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BuyOrder, ItemData } from '../types'
 import { FACTIONS } from '../factions'
 import StatsModal from './StatsModal'
+import BuyersModal from './BuyersModal'
 
 interface ItemTableProps {
     selectedFaction: string
@@ -10,6 +11,7 @@ interface ItemTableProps {
 
 export default function ItemTable({ selectedFaction, itemData }: ItemTableProps): React.JSX.Element {
     const [statsItem, setStatsItem] = useState<string | null>(null)
+    const [buyersItem, setBuyersItem] = useState<string | null>(null)
 
     return (
         <>
@@ -32,7 +34,12 @@ export default function ItemTable({ selectedFaction, itemData }: ItemTableProps)
                                     const orders = itemData[item]
                                     const top: BuyOrder | undefined = orders?.[0]
                                     return (
-                                        <tr key={item} className="item-row">
+                                        <tr
+                                            key={item}
+                                            className="item-row clickable"
+                                            onClick={() => setBuyersItem(item)}
+                                            title="Click to view top buyers"
+                                        >
                                             <td className="col-item">{item}</td>
                                             <td className="col-plat">
                                                 {orders === undefined ? (
@@ -57,7 +64,7 @@ export default function ItemTable({ selectedFaction, itemData }: ItemTableProps)
                                                     <span className="val-buyer">{top.user.ingameName}</span>
                                                 ) : null}
                                             </td>
-                                            <td className="col-actions">
+                                            <td className="col-actions" onClick={e => e.stopPropagation()}>
                                                 <button
                                                     className="btn-stats"
                                                     onClick={() => setStatsItem(item)}
@@ -79,6 +86,13 @@ export default function ItemTable({ selectedFaction, itemData }: ItemTableProps)
                 <StatsModal
                     itemName={statsItem}
                     onClose={() => setStatsItem(null)}
+                />
+            )}
+
+            {buyersItem && (
+                <BuyersModal
+                    itemName={buyersItem}
+                    onClose={() => setBuyersItem(null)}
                 />
             )}
         </>
