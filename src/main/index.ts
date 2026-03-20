@@ -6,29 +6,32 @@ import axios from 'axios'
 import { autoUpdater } from 'electron-updater'
 
 // ── Auto-updater configuration ──────────────────────────────
-autoUpdater.autoDownload = true        // download silently in background
-autoUpdater.autoInstallOnAppQuit = true // install when app quits if user chose Later
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = false
 
 autoUpdater.on('update-available', (info) => {
-  console.log(`Update available: v${info.version} — downloading in background...`)
-})
-
-autoUpdater.on('update-downloaded', (info) => {
-  // Update is ready — now notify the user
+  // Notify immediately when update is detected, BEFORE downloading
   dialog.showMessageBox({
     type: 'info',
-    title: 'Update Ready',
-    message: `Version ${info.version} has been downloaded.`,
-    detail: 'The update has been downloaded in the background and is ready to install.\n\nYou can install it now (the app will restart) or continue using the app — it will be installed automatically when you next close it.',
-    buttons: ['Install Now', 'Later'],
+    title: 'Update Available — v' + info.version,
+    message: `Version ${info.version} is available!`,
+    detail: 'Choose how you would like to update:\n\n• Update Now — downloads and installs immediately, app will restart\n• Update on Close — downloads in background, installs when you close the app\n• Skip — do not update this session',
+    buttons: ['Update Now', 'Update on Close', 'Skip'],
     defaultId: 0,
-    cancelId: 1
+    cancelId: 2
   }).then(({ response }) => {
     if (response === 0) {
-      autoUpdater.quitAndInstall(false, true)
-      // false = don't silent-install, true = restart after install
+      // Download then immediately install
+      autoUpdater.downloadUpdate()
+      autoUpdater.once('update-downloaded', () => {
+        autoUpdater.quitAndInstall(false, true)
+      })
+    } else if (response === 1) {
+      // Download silently, install on close
+      autoUpdater.autoInstallOnAppQuit = true
+      autoUpdater.downloadUpdate()
     }
-    // if response === 1 (Later), autoInstallOnAppQuit handles it
+    // response === 2: do nothing, skip entirely
   })
 })
 
