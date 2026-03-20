@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -10,28 +10,62 @@ autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 
 autoUpdater.on('update-available', (info) => {
-  // Notify immediately when update is detected, BEFORE downloading
   dialog.showMessageBox({
     type: 'info',
     title: 'Update Available — v' + info.version,
     message: `Version ${info.version} is available!`,
-    detail: 'Choose how you would like to update:\n\n• Update Now — downloads and installs immediately, app will restart\n• Update on Close — downloads in background, installs when you close the app\n• Skip — do not update this session',
-    buttons: ['Update Now', 'Update on Close', 'Skip'],
+    detail: 'Choose how you would like to update:\n\n• Update Now — downloads and installs, app will restart\n• Install on Close — downloads in background, installs when you close the app\n• Skip — do not update this session',
+    buttons: ['Update Now', 'Install on Close', 'Skip'],
     defaultId: 0,
     cancelId: 2
   }).then(({ response }) => {
     if (response === 0) {
-      // Download then immediately install
+      // Update Now — download then install
+      new Notification({
+        title: 'Downloading Update',
+        body: `Downloading v${info.version} in the background...`
+      }).show()
+
       autoUpdater.downloadUpdate()
-      autoUpdater.once('update-downloaded', () => {
-        autoUpdater.quitAndInstall(true, true)
+
+      autoUpdater.once('update-downloaded', (downloadedInfo) => {
+        new Notification({
+          title: 'Installing Update',
+          body: `Installing v${downloadedInfo.version}... The app will restart shortly.`
+        }).show()
+
+        // Small delay so user sees the notification before restart
+        setTimeout(() => {
+          autoUpdater.quitAndInstall(true, true)
+        }, 3000)
       })
+
     } else if (response === 1) {
-      // Download silently, install on close
-      autoUpdater.autoInstallOnAppQuit = true
+      // Install on Close
+      new Notification({
+        title: 'Update Scheduled',
+        body: `v${info.version} will be downloaded and installed when you close the app.`
+      }).show()
+
       autoUpdater.downloadUpdate()
+
+      autoUpdater.once('update-downloaded', (downloadedInfo) => {
+        new Notification({
+          title: 'Update Ready',
+          body: `v${downloadedInfo.version} has been downloaded and will install when you close the app.`
+        }).show()
+
+        autoUpdater.autoInstallOnAppQuit = true
+      })
+
+      app.once('before-quit', () => {
+        new Notification({
+          title: 'Update Installing',
+          body: 'Update is being installed. The new version will be ready next time you open the app.'
+        }).show()
+      })
     }
-    // response === 2: do nothing, skip entirely
+    // response === 2: Skip, do nothing
   })
 })
 
