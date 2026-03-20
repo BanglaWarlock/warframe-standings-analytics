@@ -24,7 +24,7 @@ autoUpdater.on('update-available', (info) => {
       // Download then immediately install
       autoUpdater.downloadUpdate()
       autoUpdater.once('update-downloaded', () => {
-        autoUpdater.quitAndInstall(false, true)
+        autoUpdater.quitAndInstall(true, true)
       })
     } else if (response === 1) {
       // Download silently, install on close
