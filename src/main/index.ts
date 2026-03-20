@@ -39,6 +39,7 @@ autoUpdater.on('error', (err) => {
   console.error('Auto-updater error:', err.message)
 })
 
+
 // ── IPC handlers ─────────────────────────────────────────────
 ipcMain.handle('fetch-item-price', async (_event, itemSlug: string) => {
   const url = `https://api.warframe.market/v2/orders/item/${itemSlug}/top`
